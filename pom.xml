@@ -6,7 +6,7 @@
 
     <groupId>com.example</groupId>
     <artifactId>javTex</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
 
     <name>javTex</name>
     <description>A java LaTeX compiler and viewer</description>
@@ -29,6 +29,13 @@
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
             <version>3.0.5</version>
+        </dependency>
+
+        <!-- Consistent light and dark swing components -->
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>3.6.1</version>
         </dependency>
     </dependencies>
 

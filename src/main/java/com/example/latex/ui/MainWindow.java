@@ -10,12 +10,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.prefs.Preferences;
+
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import org.fife.ui.rtextarea.*;
-import org.fife.ui.rsyntaxtextarea.*;
 
 public class MainWindow extends JFrame {
     private final Compiler latexCompiler = new Compiler();
@@ -27,6 +25,9 @@ public class MainWindow extends JFrame {
     private Path currentFile = null;
 
     private final PDFViewer pdfViewer = new PDFViewer();
+
+    private final Preferences preferences = Preferences.userNodeForPackage(MainWindow.class);
+    private boolean darkMode = preferences.getBoolean("darkMode", false);
     
     public MainWindow() {
         createWindow();
@@ -45,6 +46,7 @@ public class MainWindow extends JFrame {
 
         setSize(1200, 800);
         setLocationRelativeTo(null);
+        ThemeManager.applyTheme(this, editor, darkMode);
 
         JSplitPane splitPane = new JSplitPane(
             JSplitPane.HORIZONTAL_SPLIT,
@@ -86,7 +88,23 @@ public class MainWindow extends JFrame {
         fileMenu.addSeparator();
         fileMenu.add(compileItem);
 
+        JMenu viewMenu = new JMenu("View");
+
+        JCheckBoxMenuItem darkModeItem = new JCheckBoxMenuItem("Dark Mode");
+        darkModeItem.setSelected(darkMode);
+
+        darkModeItem.addActionListener(e -> {
+            darkMode = darkModeItem.isSelected();
+
+            preferences.putBoolean("darkMode", darkMode);
+
+            ThemeManager.applyTheme(this, editor, darkMode);
+        });
+
+        viewMenu.add(darkModeItem);
+
         menuBar.add(fileMenu);
+        menuBar.add(viewMenu);
         setJMenuBar(menuBar);
     }
 
