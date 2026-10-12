@@ -61,7 +61,7 @@ public class PDFViewer extends JPanel {
                 try (PDDocument document = Loader.loadPDF(pdfFile.toFile())) {
                     PDFRenderer renderer = new PDFRenderer(document);
                     for (int i = 0; i < document.getNumberOfPages(); i++) {
-                        images.add(renderer.renderImageWithDPI(i, 110));
+                        images.add(renderer.renderImageWithDPI(i, 300));
                     }
                 }
                 return images;
