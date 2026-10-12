@@ -19,33 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Third-party components
-
-javTex uses third-party software that is not relicensed under the MIT License. These components remain subject to their respective licences. The MIT License above applies to the original javTex materials only and does not replace or limit the terms of third-party components.
-
-Runtime dependencies
-RSyntaxTextArea 3.6.0 — BSD 3-Clause License. See the RSyntaxTextArea project repository for the applicable licence text, Copyright (c) 2021, Robert Futrell All rights reserved.
-Apache PDFBox 3.0.5 — Apache License 2.0. See the Apache PDFBox project repository for the applicable licence text and any NOTICE file.
-
-These are the direct runtime dependencies declared in the project's pom.xml. The application may also include transitive runtime dependencies. Their licences and notices must be reviewed and preserved as applicable before redistributing the packaged application.
-
-Build tools
-
-The pom.xml configures the following Maven plugins:
-
-Maven Compiler Plugin 3.14.1 — Apache License 2.0.
-Maven JAR Plugin 3.4.2 — Apache License 2.0.
-Maven Shade Plugin 3.6.1 — Apache License 2.0.
-
-These plugins are build-time tools and are not normally part of the distributed application merely because they are used to build it. Their respective licences apply to the plugins themselves.
-
-The full Apache License 2.0 text is available at https://www.apache.org/licenses/LICENSE-2.0.
-
-The full BSD 3-Clause licence text is available at https://opensource.org/license/bsd-3-clause.
-
-Redistribution
-
-When redistributing javTex, retain the applicable third-party copyright, licence, and notice information. Where a third-party component's licence or distribution includes a NOTICE file, include applicable notices as required by that licence.
-
-Before publishing a release, review the complete runtime dependency tree (for example, by running mvn dependency:tree) and verify that the licence and notice requirements of all included components are satisfied.
