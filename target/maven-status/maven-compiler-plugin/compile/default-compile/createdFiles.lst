@@ -1,6 +1,8 @@
 com/example/latex/compiler/Compiler.class
 com/example/latex/compiler/Compiler$CompilationResult.class
+com/example/latex/pdf/PDFViewer$1.class
 com/example/latex/ui/MainWindow$3.class
+com/example/latex/pdf/PDFViewer.class
 com/example/latex/ui/MainWindow$1.class
 com/example/latex/Main.class
 com/example/latex/ui/MainWindow.class

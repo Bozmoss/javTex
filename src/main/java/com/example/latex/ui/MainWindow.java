@@ -1,6 +1,7 @@
 package com.example.latex.ui;
 
 import com.example.latex.compiler.Compiler;
+import com.example.latex.pdf.PDFViewer;
 import java.awt.*;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
@@ -25,6 +26,8 @@ public class MainWindow extends JFrame {
     private final JTextArea buildLog = new JTextArea(8, 80);
 
     private Path currentFile = null;
+
+    private final PDFViewer pdfViewer = new PDFViewer();
 
     private RSyntaxTextArea editor;
     
@@ -72,13 +75,10 @@ public class MainWindow extends JFrame {
         RTextScrollPane sp = new RTextScrollPane(editor);
         sp.setLineNumbersEnabled(true);
 
-        JPanel preview = new JPanel(new BorderLayout());
-        preview.add(new JLabel("PDF Here"), BorderLayout.CENTER);
-
         JSplitPane splitPane = new JSplitPane(
             JSplitPane.HORIZONTAL_SPLIT,
             sp,
-            preview
+            pdfViewer
         );
 
         splitPane.setResizeWeight(0.5);
@@ -342,6 +342,14 @@ public class MainWindow extends JFrame {
 
                     if (result.isSuccess()) {
                         buildLog.append("\nCompilation succeeded.");
+
+                        String texName = fileToCompile.getFileName().toString();
+
+                        String pdfName = texName.replaceFirst("(?i)\\.tex$", ".pdf");
+
+                        Path pdfFile = fileToCompile.resolveSibling(pdfName);
+
+                        pdfViewer.loadPDF(pdfFile);
                     }
                     else {
                         buildLog.append("\nCompilation failed.");
