@@ -14,8 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PDFViewer extends JPanel {
+    private List<BufferedImage> pageImages = new ArrayList<>();
+    private final List<JLabel> pageLabels = new ArrayList<>();
     private final JPanel pagesPanel;
     private final JLabel statusLabel;
+
+    private double zoom = 1.0;
+    private static final double MIN_ZOOM = 0.25;
+    private static final double MAX_ZOOM = 3.0;
+    private static final double ZOOM_STEP = 0.1;
 
     public PDFViewer() {
         setLayout(new BorderLayout());
@@ -29,6 +36,15 @@ public class PDFViewer extends JPanel {
         statusLabel.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
 
         JScrollPane scrollPane = new JScrollPane(pagesPanel);
+
+        pagesPanel.addMouseWheelListener(e -> {
+            if (e.isControlDown()) {
+                e.consume();
+
+                double newZoom = zoom - e.getPreciseWheelRotation() * ZOOM_STEP;
+                setZoom(newZoom);
+            }
+        });
 
         // Adjust vertical scrolling speed (pixels per unit)
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
@@ -61,7 +77,7 @@ public class PDFViewer extends JPanel {
                 try (PDDocument document = Loader.loadPDF(pdfFile.toFile())) {
                     PDFRenderer renderer = new PDFRenderer(document);
                     for (int i = 0; i < document.getNumberOfPages(); i++) {
-                        images.add(renderer.renderImageWithDPI(i, 300));
+                        images.add(renderer.renderImageWithDPI(i, 200));
                     }
                 }
                 return images;
@@ -70,19 +86,25 @@ public class PDFViewer extends JPanel {
             @Override 
             protected void done() {
                 try {
-                    List<BufferedImage> images = get();
+                    pageImages.clear();
+                    pageLabels.clear();
+                    pagesPanel.removeAll();
+                    pageImages = get();
 
-                    for (int i = 0; i < images.size(); i++) {
-                        JLabel pageLabel = new JLabel(new ImageIcon(images.get(i)));
+                    for (BufferedImage image : pageImages) {
+                        JLabel pageLabel = new JLabel();
                         pageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-                        pageLabel.setBorder(
-                            BorderFactory.createEmptyBorder(8, 8, 8, 8)
-                        );
+                        pageLabel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+
+                        pageLabels.add(pageLabel);
                         pagesPanel.add(pageLabel);
                     }
 
+                    zoom = 0.0;
+                    setZoom(1.0);
+
                     statusLabel.setText(
-                        images.size() + " page(s) - " + pdfFile.getFileName()
+                        pageImages.size() + " page(s) - " + pdfFile.getFileName()
                     );
 
                     pagesPanel.revalidate();
@@ -99,6 +121,37 @@ public class PDFViewer extends JPanel {
     private void showError(String message) {
         statusLabel.setText(message);
         pagesPanel.removeAll();
+        pagesPanel.revalidate();
+        pagesPanel.repaint();
+    }
+
+    private void setZoom(double newZoom) {
+        double clampedZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
+        if (Math.abs(clampedZoom - zoom) < 0.001) {
+            return;
+        }
+        zoom = clampedZoom;
+
+        for (int i = 0; i < pageImages.size(); i++) {
+            BufferedImage original = pageImages.get(i);
+
+            int width = (int) (original.getWidth() * zoom);
+            int height = (int) (original.getHeight() * zoom);
+
+            BufferedImage scaled = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+            Graphics2D g = scaled.createGraphics();
+            g.setRenderingHint(
+                RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BILINEAR
+            );
+
+            g.drawImage(original, 0, 0, width, height, null);
+            g.dispose();
+
+            pageLabels.get(i).setIcon(new ImageIcon(scaled));
+        }
+
         pagesPanel.revalidate();
         pagesPanel.repaint();
     }
