@@ -1,5 +1,7 @@
 package com.example.latex.ui;
 
+import com.example.latex.compiler.Compiler;
+import java.awt.*;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -17,6 +19,10 @@ import org.fife.ui.rsyntaxtextarea.*;
 public class MainWindow extends JFrame {
     private boolean isDirty = false;
     private boolean loadingDocument = false;
+
+    private final Compiler latexCompiler = new Compiler();
+
+    private final JTextArea buildLog = new JTextArea(8, 80);
 
     private Path currentFile = null;
 
@@ -78,6 +84,12 @@ public class MainWindow extends JFrame {
         splitPane.setResizeWeight(0.5);
         add(splitPane, BorderLayout.CENTER);
 
+        buildLog.setEditable(false);
+        buildLog.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        buildLog.setText("Ready to Compile.");
+
+        add(new JScrollPane(buildLog), BorderLayout.SOUTH);
+
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
 
@@ -86,18 +98,22 @@ public class MainWindow extends JFrame {
         JMenuItem saveItem = new JMenuItem("Save");
         JMenuItem saveAsItem = new JMenuItem("Save As...");
         JMenuItem exitItem = new JMenuItem("Exit");
+        JMenuItem compileItem = new JMenuItem("Compile");
 
         newItem.addActionListener(e -> newDocument());
         openItem.addActionListener(e -> openDocument());
         saveItem.addActionListener(e -> saveDocument());
         saveAsItem.addActionListener(e -> saveDocumentAs());
         exitItem.addActionListener(e -> requestClose());
+        compileItem.addActionListener(e -> compileDocument());
 
         fileMenu.add(newItem);
         fileMenu.add(openItem);
         fileMenu.add(saveItem);
         fileMenu.add(saveAsItem);
         fileMenu.add(exitItem);
+        fileMenu.addSeparator();
+        fileMenu.add(compileItem);
 
         menuBar.add(fileMenu);
         setJMenuBar(menuBar);
@@ -292,5 +308,52 @@ public class MainWindow extends JFrame {
         if (confirmUnsavedChanges()) {
             dispose();
         }
+    }
+
+    private void compileDocument() {
+        if (currentFile == null) {
+            if (!saveDocumentAs()) {
+                return;
+            }
+        }
+        else if (isDirty) {
+            if (!saveDocument()) {
+                return;
+            }
+        }
+
+        Path fileToCompile = currentFile;
+
+        buildLog.setText("Compiling " + fileToCompile.getFileName() + "...\n");
+
+        SwingWorker<Compiler.CompilationResult, Void> worker = new SwingWorker<>() {
+            @Override 
+            protected Compiler.CompilationResult doInBackground() throws Exception {
+                return latexCompiler.compile(fileToCompile);
+            }
+
+            @Override 
+            protected void done() {
+                try {
+                    Compiler.CompilationResult result = get();
+
+                    buildLog.append(result.output());
+                    buildLog.append("\n\nExit code: " + result.exitCode());
+
+                    if (result.isSuccess()) {
+                        buildLog.append("\nCompilation succeeded.");
+                    }
+                    else {
+                        buildLog.append("\nCompilation failed.");
+                    }
+                } catch (Exception ex) {
+                    buildLog.append("\nCould not run LaTeX:\n" + ex.getMessage());
+                }
+
+                buildLog.setCaretPosition(buildLog.getDocument().getLength());
+            }
+        };
+
+        worker.execute();
     }
 }
