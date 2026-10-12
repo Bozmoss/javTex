@@ -1,9 +1,9 @@
 package com.example.latex.ui;
 
 import com.example.latex.compiler.Compiler;
+import com.example.latex.editor.Editor;
 import com.example.latex.pdf.PDFViewer;
 import java.awt.*;
-import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -18,18 +18,15 @@ import org.fife.ui.rtextarea.*;
 import org.fife.ui.rsyntaxtextarea.*;
 
 public class MainWindow extends JFrame {
-    private boolean isDirty = false;
-    private boolean loadingDocument = false;
-
     private final Compiler latexCompiler = new Compiler();
+
+    private final Editor editor = new Editor(this::updateWindowTitle);
 
     private final JTextArea buildLog = new JTextArea(8, 80);
 
     private Path currentFile = null;
 
     private final PDFViewer pdfViewer = new PDFViewer();
-
-    private RSyntaxTextArea editor;
     
     public MainWindow() {
         createWindow();
@@ -49,35 +46,9 @@ public class MainWindow extends JFrame {
         setSize(1200, 800);
         setLocationRelativeTo(null);
 
-        editor = new RSyntaxTextArea();
-        editor.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
-        editor.setCodeFoldingEnabled(true);
-        editor.setTabSize(4);
-        editor.getDocument().addDocumentListener(
-            new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    markDirty();
-                }
-
-                @Override 
-                public void removeUpdate(DocumentEvent e) {
-                    markDirty();
-                }
-
-                @Override 
-                public void changedUpdate(DocumentEvent e) {
-                    markDirty();
-                }
-            }
-        );
-
-        RTextScrollPane sp = new RTextScrollPane(editor);
-        sp.setLineNumbersEnabled(true);
-
         JSplitPane splitPane = new JSplitPane(
             JSplitPane.HORIZONTAL_SPLIT,
-            sp,
+            editor.getScrollPane(),
             pdfViewer
         );
 
@@ -119,17 +90,10 @@ public class MainWindow extends JFrame {
         setJMenuBar(menuBar);
     }
 
-    private void markDirty() {
-        if (!loadingDocument) {
-            isDirty = true;
-            updateWindowTitle();
-        }
-    }
-
     private void updateWindowTitle() {
         String name = (currentFile == null) ? "Untitled" : currentFile.getFileName().toString();
 
-        setTitle("javTex - " + name + (isDirty ? " *" : ""));   
+        setTitle("javTex - " + name + (editor.isDirty() ? " *" : ""));   
     }
 
     private boolean saveDocument() {
@@ -144,7 +108,7 @@ public class MainWindow extends JFrame {
                 StandardCharsets.UTF_8
             );
 
-            isDirty = false;
+            editor.setDirty(false);
             updateWindowTitle();
             return true;
         } catch (IOException e) {
@@ -207,105 +171,15 @@ public class MainWindow extends JFrame {
     }
 
     private void openDocument() {
-        JFileChooser chooser = new JFileChooser();
-
-        chooser.setDialogTitle("Open LaTeX Document");
-        chooser.setFileFilter(
-            new FileNameExtensionFilter(
-                "LaTeX Files (*.tex)", "tex"
-            )
-        );
-
-        if (chooser.showOpenDialog(this)
-                != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
-
-        Path selectedFile = chooser.getSelectedFile().toPath();
-
-        // Read first, so a read error doesn't destroy the current document.
-        final String content;
-
-        try {
-            content = Files.readString(
-                selectedFile,
-                StandardCharsets.UTF_8
-            );
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(
-                this,
-                "Could not open file:\n" + e.getMessage(),
-                "Open Error",
-                JOptionPane.ERROR_MESSAGE
-            );
-            return;
-        }
-
-        // Only replace the current document if the user agrees.
-        if (!confirmUnsavedChanges()) {
-            return;
-        }
-
-        loadingDocument = true;
-
-        try {
-            editor.setText(content);
-            editor.setCaretPosition(0);
-            currentFile = selectedFile;
-            isDirty = false;
-        } finally {
-            loadingDocument = false;
-        }
-
-        updateWindowTitle();
+        currentFile = editor.openDocument(currentFile, this::saveDocument);
     }
 
     private void newDocument() {
-        if (!confirmUnsavedChanges()) {
-            return;
-        }
-
-        loadingDocument = true;
-
-        try {
-            editor.setText("");
-            editor.setCaretPosition(0);
-            currentFile = null;
-            isDirty = false;
-        } finally {
-            loadingDocument = false;
-        }
-
-        updateWindowTitle();
-    }
-
-    private boolean confirmUnsavedChanges() {
-        if (!isDirty) {
-            return true;
-        }
-
-        int choice = JOptionPane.showConfirmDialog(
-            this,
-            "Do you want to save your changes?",
-            "Unsaved Changes",
-            JOptionPane.YES_NO_CANCEL_OPTION,
-            JOptionPane.WARNING_MESSAGE
-        );
-
-        if (choice == JOptionPane.YES_OPTION) {
-            return saveDocument();
-        }
-
-        if (choice == JOptionPane.NO_OPTION) {
-            return true;
-        }
-
-        // Cancel or close the dialog.
-        return false;
+        currentFile = editor.newDocument(currentFile, this::saveDocument);
     }
 
     private void requestClose() {
-        if (confirmUnsavedChanges()) {
+        if (editor.confirmUnsavedChanges(this::saveDocument)) {
             dispose();
         }
     }
@@ -316,7 +190,7 @@ public class MainWindow extends JFrame {
                 return;
             }
         }
-        else if (isDirty) {
+        else if (editor.isDirty()) {
             if (!saveDocument()) {
                 return;
             }
