@@ -14,9 +14,17 @@
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.version>5.10.2</junit.version>
     </properties>
 
     <dependencies>
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- LaTeX editor with syntax highlighting -->
         <dependency>
             <groupId>com.fifesoft</groupId>
@@ -26,9 +34,14 @@
 
         <!-- PDF rendering -->
         <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
-            <version>3.0.5</version>
+            <groupId>com.github.pcorless.icepdf</groupId>
+            <artifactId>icepdf-core</artifactId>
+            <version>7.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.pcorless.icepdf</groupId>
+            <artifactId>icepdf-viewer</artifactId>
+            <version>7.4.1</version>
         </dependency>
 
         <!-- Consistent light and dark swing components -->
@@ -60,6 +73,12 @@
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
             </plugin>
 
             <!-- Packages dependencies into the jar application -->

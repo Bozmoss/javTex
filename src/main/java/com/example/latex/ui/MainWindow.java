@@ -4,6 +4,8 @@ import com.example.latex.compiler.Compiler;
 import com.example.latex.editor.Editor;
 import com.example.latex.pdf.PDFViewer;
 import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -79,6 +81,12 @@ public class MainWindow extends JFrame {
         saveAsItem.addActionListener(e -> saveDocumentAs());
         exitItem.addActionListener(e -> requestClose());
         compileItem.addActionListener(e -> compileDocument());
+
+        newItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
+        openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+        saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
+        compileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
 
         fileMenu.add(newItem);
         fileMenu.add(openItem);
@@ -190,10 +198,12 @@ public class MainWindow extends JFrame {
 
     private void openDocument() {
         currentFile = editor.openDocument(currentFile, this::saveDocument);
+        updateWindowTitle();
     }
 
     private void newDocument() {
         currentFile = editor.newDocument(currentFile, this::saveDocument);
+        updateWindowTitle();
     }
 
     private void requestClose() {

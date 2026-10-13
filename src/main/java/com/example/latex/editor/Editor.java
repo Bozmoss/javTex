@@ -7,12 +7,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.function.BooleanSupplier;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+
+import org.fife.ui.rsyntaxtextarea.CodeTemplateManager;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -25,8 +27,25 @@ public class Editor extends RSyntaxTextArea {
 
     private final RTextScrollPane scrollPane;
 
+    private ShortcutManager shortcutManager;
+
     public Editor(Runnable updateWindowTitle) {
         this.updateWindowTitle = updateWindowTitle;
+        setTemplatesEnabled(true);
+
+        Path defaultPath = Paths.get("target/classes/default.hotkey");
+        CodeTemplateManager ctm = getCodeTemplateManager();
+        try {
+            shortcutManager = new ShortcutManager(defaultPath, ctm);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Could not open hotkey file:\n" + e.getMessage(),
+                "Hotkey error",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
+
         setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
         setCodeFoldingEnabled(true);
         setTabSize(4);
@@ -104,7 +123,6 @@ public class Editor extends RSyntaxTextArea {
             loadingDocument = false;
         }
 
-        updateWindowTitle.run();
         return currentFile;
     }
 
@@ -124,7 +142,6 @@ public class Editor extends RSyntaxTextArea {
             loadingDocument = false;
         }
 
-        updateWindowTitle.run();
         return currentFile;
     }
 
