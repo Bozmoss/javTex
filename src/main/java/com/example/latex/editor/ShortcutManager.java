@@ -3,7 +3,6 @@ package com.example.latex.editor;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
