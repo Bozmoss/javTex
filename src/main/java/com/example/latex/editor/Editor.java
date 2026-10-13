@@ -3,6 +3,7 @@ package com.example.latex.editor;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -168,6 +169,17 @@ public class Editor extends RSyntaxTextArea {
 
         // Cancel or close the dialog.
         return false;
+    }
+
+    @Override 
+    protected void processKeyEvent(KeyEvent e) {
+        if (e.getID() == KeyEvent.KEY_TYPED && e.getKeyChar() == ' ' && shortcutManager != null) {
+            if(shortcutManager.expandMacro(this)) {
+                e.consume();
+                return;
+            }
+        }
+        super.processKeyEvent(e);
     }
 
     public RTextScrollPane getScrollPane() {
