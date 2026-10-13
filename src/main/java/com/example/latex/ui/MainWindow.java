@@ -30,6 +30,7 @@ public class MainWindow extends JFrame {
 
     private final Preferences preferences = Preferences.userNodeForPackage(MainWindow.class);
     private boolean darkMode = preferences.getBoolean("darkMode", false);
+    private boolean macrosEnabled = preferences.getBoolean("macrosEnabled", true);
     
     public MainWindow() {
         createWindow();
@@ -111,8 +112,33 @@ public class MainWindow extends JFrame {
 
         viewMenu.add(darkModeItem);
 
+        JMenu optionsMenu = new JMenu("Options");
+
+        JCheckBoxMenuItem macrosItem = new JCheckBoxMenuItem("Enable Macros");
+        macrosItem.setSelected(macrosEnabled);
+
+        editor.setMacrosEnabled(macrosEnabled);
+
+        macrosItem.addActionListener(e -> {
+            macrosEnabled = macrosItem.isSelected();
+
+            preferences.putBoolean("macrosEnabled", macrosEnabled);
+
+            editor.setMacrosEnabled(macrosEnabled);
+        });
+
+        macrosItem.setAccelerator(
+            KeyStroke.getKeyStroke(
+                KeyEvent.VK_M,
+                InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK
+            )
+        );
+
+        optionsMenu.add(macrosItem);
+
         menuBar.add(fileMenu);
         menuBar.add(viewMenu);
+        menuBar.add(optionsMenu);
         setJMenuBar(menuBar);
     }
 

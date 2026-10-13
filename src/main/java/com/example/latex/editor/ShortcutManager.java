@@ -16,6 +16,7 @@ public class ShortcutManager {
     private Path fileName;
     private String[][] shortcuts;
     private final CodeTemplateManager ctm;
+    private boolean enabled = true;
 
     public ShortcutManager(Path fileName, CodeTemplateManager ctm) throws IOException {
         this.ctm = ctm;
@@ -56,6 +57,9 @@ public class ShortcutManager {
     }
 
     public boolean expandMacro(Editor editor) {
+        if (!enabled) {
+            return false;
+        }
         int caret = editor.getCaretPosition();
 
         if (caret == 0) {
@@ -106,5 +110,13 @@ public class ShortcutManager {
         }
 
         return false;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean b) {
+        enabled = b;
     }
 }

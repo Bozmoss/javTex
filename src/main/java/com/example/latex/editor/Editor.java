@@ -182,6 +182,17 @@ public class Editor extends RSyntaxTextArea {
         super.processKeyEvent(e);
     }
 
+    public void setMacrosEnabled(boolean enabled) {
+        if (shortcutManager != null) {
+            shortcutManager.setEnabled(enabled);
+        }
+        setTemplatesEnabled(enabled);
+    }
+
+    public boolean areMacrosEnabled() {
+        return shortcutManager != null && shortcutManager.isEnabled();
+    }
+
     public RTextScrollPane getScrollPane() {
         return scrollPane;
     }
