@@ -34,17 +34,27 @@ public class Editor extends RSyntaxTextArea {
         this.updateWindowTitle = updateWindowTitle;
         setTemplatesEnabled(true);
 
-        Path defaultPath = Paths.get("target/classes/default.hotkey");
-        CodeTemplateManager ctm = getCodeTemplateManager();
-        try {
-            shortcutManager = new ShortcutManager(defaultPath, ctm);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(
-                this,
-                "Could not open hotkey file:\n" + e.getMessage(),
-                "Hotkey error",
-                JOptionPane.ERROR_MESSAGE
-            );
+        boolean application = false;
+        while (true) {
+            String location = application ? "app/classes/default.hotkey" : "target/classes/default.hotkey";
+            Path defaultPath = Paths.get(location);
+            CodeTemplateManager ctm = getCodeTemplateManager();
+            try {
+                shortcutManager = new ShortcutManager(defaultPath, ctm);
+                break;
+            } catch (IOException e) {
+                if (!application) {
+                    application = true;
+                } else {
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "Could not open hotkey file:\n" + e.getMessage(),
+                        "Hotkey error",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                    break;
+                }
+            }
         }
 
         setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
