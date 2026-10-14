@@ -3,6 +3,7 @@ package com.example.latex.editor;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -41,7 +42,10 @@ public class ShortcutManager {
         for (int i = 0; i < hotkeys.length; i++) {
             String[] temp = hotkeys[i].split("::=", 2);
             String name = temp[0].replaceAll("\\s", "");
-            String expansion = temp[1].replace("\\n", "\n").replaceAll("^\\s+", "");
+            String expansion = temp[1]
+            .replace("\\n", "\n")
+            .replace("\\t", "\t")
+            .replaceAll("^\\s+", "");
             String[] temp1 = expansion.split("\\|", 2);
             if (temp1.length == 1) {
                 temp1 = new String[]{temp1[0], ""};
@@ -52,7 +56,19 @@ public class ShortcutManager {
     }
 
     private String readHotkeyFile() throws IOException {
-        return Files.readString(fileName);
+        return Files.readAllLines(fileName)
+            .stream()
+            .map(line -> {
+                int commentStart = line.indexOf("//");
+
+                if (commentStart >= 0) {
+                    return line.substring(0, commentStart);
+                }
+
+                return line;
+            })
+            .collect(Collectors.joining("\n"))
+            .stripTrailing();
     }
 
     public boolean expandMacro(Editor editor) {
@@ -73,8 +89,9 @@ public class ShortcutManager {
 
             while (start > 0) {
                 char c = text.charAt(start - 1);
-
-                if (!Character.isLetterOrDigit(c)) {
+                
+                if (!Character.isLetterOrDigit(c) && c != '@' && c != '_' && c != '/' && c != '+' && c != '-' && c != '.' && c != '*'
+                    && c != '=' && c!= '!' && c != '<' && c != '>') {
                     break;
                 }
 

@@ -1,2 +1,106 @@
+// Start a maths environment
 mk ::= $|$;
-dm ::= $$\n|\n$$;
+dm ::= \begin{align*}\n\t|\n\end{align};
+
+// Greek letters
+@a ::= \alpha;
+@b ::= \beta;
+@g ::= \gamma;
+@G ::= \Gamma;
+@d ::= \delta;
+@D ::= \Delta;
+@e ::= \varepsilon;
+@z ::= \zeta;
+@t ::= \theta;
+@T ::= \Theta;
+@i ::= \iota;
+@k ::= \kappa;
+@l ::= \lambda;
+@L ::= \Lambda;
+@s ::= \sigma;
+@S ::= \Sigma;
+@u ::= \upsilon;
+@U ::= \Upsilon;
+@o ::= \omega;
+@O ::= \Omega;
+
+// Text environment
+txt ::= \text{|};
+
+// Basic operations
+sr ::= ^{2};
+cb ::= ^{3};
+rd ::= ^{|};
+_ ::= _{|};
+sqrt ::= \sqrt{|};
+rt ::= \sqrt[|]{};
+/ ::= \frac{|}{};
+ee ::= e^{|};
+
+exp ::= \exp;
+log ::= \log;
+ln ::= \ln;
+conj ::= ^{*};
+Re ::= \mathrm{Re};
+Im ::= \mathrm{Im};
+bf ::= \mathbf{|};
+
+// More operations
+hat ::= \hat{|};
+bar ::= \bar{|};
+dot ::= \dot{|};
+ddot ::= \ddot{|};
+tilde ::= \tilde{|};
+vec ::= \vec{|};
+
+// Symbols
+inf ::= \infty;
+sum ::= \sum_{|}^{};
+prod ::= \prod_{|}^{};
+lim ::= \lim_{|};
++- ::= \pm;
+-+ ::= \mp;
+... ::= \dots;
+del ::= \nabla;
+xx ::= \times;
+** ::= \cdot;
+para ::= \parallel;
+deg ::= \degree;
+=== ::= \equiv;
+!= ::= \neq;
+<= ::= \leq;
+>= ::= \geq;
+
+inn ::= \in;
+notin ::= \not\in;
+
+// Number sets
+NN ::= \mathbb{N};
+ZZ ::= \mathbb{Z};
+QQ ::= \mathbb{Q};
+RR ::= \mathbb{R};
+
+// Calculus
+par ::= \frac{\partial |}{\partial };
+int ::= \int|dx;
+deriv ::= \frac{d|}{d};
+
+// Trig
+arcsin ::= \arcsin;
+sin ::= \sin;
+arccos ::= \arccos;
+cos ::= \cos;
+arctan ::= \arctan;
+tan ::= \tan;
+csc ::= \csc;
+sec ::= \sec;
+cot ::= \cot;
+
+// Matrices
+mat ::= \begin{pmat}\n\t|\n\end{pmat};
+
+// Brackets
+norm ::= \left\lVert\left\lVert | \right\rVert\right\rVert;
+abs ::= \left\lVert | \right\rVert;
+
+// More to come
