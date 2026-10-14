@@ -1,6 +1,7 @@
 /mnt/c/Dev/Java Personal/LaTeX software/javTex/src/main/java/com/example/latex/Main.java
 /mnt/c/Dev/Java Personal/LaTeX software/javTex/src/main/java/com/example/latex/compiler/Compiler.java
 /mnt/c/Dev/Java Personal/LaTeX software/javTex/src/main/java/com/example/latex/editor/Editor.java
+/mnt/c/Dev/Java Personal/LaTeX software/javTex/src/main/java/com/example/latex/editor/ShortcutManager.java
 /mnt/c/Dev/Java Personal/LaTeX software/javTex/src/main/java/com/example/latex/pdf/PDFViewer.java
 /mnt/c/Dev/Java Personal/LaTeX software/javTex/src/main/java/com/example/latex/ui/MainWindow.java
 /mnt/c/Dev/Java Personal/LaTeX software/javTex/src/main/java/com/example/latex/ui/ThemeManager.java
