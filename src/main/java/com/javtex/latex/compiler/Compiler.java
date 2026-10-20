@@ -1,4 +1,4 @@
-package com.example.latex.compiler;
+package com.javtex.latex.compiler;
 
 import java.io.IOException;
 import java.nio.file.Files;

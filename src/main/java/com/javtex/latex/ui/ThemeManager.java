@@ -1,4 +1,4 @@
-package com.example.latex.ui;
+package com.javtex.latex.ui;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -12,7 +12,7 @@ import javax.swing.UIManager;
 
 import org.fife.ui.rsyntaxtextarea.Theme;
 
-import com.example.latex.editor.Editor;
+import com.javtex.latex.editor.Editor;
 
 public class ThemeManager {
     private ThemeManager() {}

@@ -1,4 +1,4 @@
-package com.example.latex.ui;
+package com.javtex.latex.ui;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.example.latex.editor.Editor;
+import com.javtex.latex.editor.Editor;
 
 public class Menu extends JMenuBar {
     private final MainWindow owner;

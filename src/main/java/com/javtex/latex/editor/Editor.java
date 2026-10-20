@@ -1,4 +1,4 @@
-package com.example.latex.editor;
+package com.javtex.latex.editor;
 
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;

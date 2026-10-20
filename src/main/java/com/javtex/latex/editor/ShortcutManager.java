@@ -1,4 +1,4 @@
-package com.example.latex.editor;
+package com.javtex.latex.editor;
 
 import java.io.IOException;
 import java.nio.file.Files;

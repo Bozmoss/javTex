@@ -1,4 +1,4 @@
-package com.example.latex.pdf;
+package com.javtex.latex.pdf;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
