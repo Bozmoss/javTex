@@ -59,6 +59,7 @@ public class MainWindow extends JFrame {
 
         splitPane.setResizeWeight(0.5);
         add(splitPane, BorderLayout.CENTER);
+        SwingUtilities.invokeLater(() -> splitPane.setDividerLocation(0.5));
 
         buildLog.setEditable(false);
         buildLog.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
