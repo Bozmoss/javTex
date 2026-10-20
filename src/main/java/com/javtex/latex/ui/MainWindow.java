@@ -21,7 +21,8 @@ public class MainWindow extends JFrame {
     private final PDFViewer pdfViewer = new PDFViewer();
 
     public MainWindow() {
-        menu = new Menu(this, editor, this::compileDocument);
+        menu = new Menu(this, editor, pdfViewer, this::compileDocument);
+        menu.loadPreviousDocument();
         createWindow();
     }
 

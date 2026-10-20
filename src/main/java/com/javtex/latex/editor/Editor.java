@@ -83,22 +83,27 @@ public class Editor extends RSyntaxTextArea {
         scrollPane.setLineNumbersEnabled(true);
     }
 
-    public Path openDocument(Path currentFile, BooleanSupplier saveDocument) {
-        JFileChooser chooser = new JFileChooser();
+    public Path openDocument(Path currentFile, BooleanSupplier saveDocument, boolean needToPick) {
+        Path selectedFile;
+        if (needToPick) {
+            JFileChooser chooser = new JFileChooser();
 
-        chooser.setDialogTitle("Open LaTeX Document");
-        chooser.setFileFilter(
-            new FileNameExtensionFilter(
-                "LaTeX Files (*.tex)", "tex"
-            )
-        );
+            chooser.setDialogTitle("Open LaTeX Document");
+            chooser.setFileFilter(
+                new FileNameExtensionFilter(
+                    "LaTeX Files (*.tex)", "tex"
+                )
+            );
 
-        if (chooser.showOpenDialog(this)
-                != JFileChooser.APPROVE_OPTION) {
-            return currentFile;
+            if (chooser.showOpenDialog(this)
+                    != JFileChooser.APPROVE_OPTION) {
+                return currentFile;
+            }
+
+            selectedFile = chooser.getSelectedFile().toPath();
+        } else {
+            selectedFile = currentFile;
         }
-
-        Path selectedFile = chooser.getSelectedFile().toPath();
 
         // Read first, so a read error doesn't destroy the current document.
         final String content;

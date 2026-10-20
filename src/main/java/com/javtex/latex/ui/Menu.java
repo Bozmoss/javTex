@@ -18,10 +18,12 @@ import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.javtex.latex.editor.Editor;
+import com.javtex.latex.pdf.PDFViewer;
 
 public class Menu extends JMenuBar {
     private final MainWindow owner;
     private final Editor editor;
+    private final PDFViewer pdfViewer;
     private final Preferences preferences;
     private final Runnable compileAction;
 
@@ -29,16 +31,27 @@ public class Menu extends JMenuBar {
     private boolean darkMode;
     private boolean macrosEnabled;
 
-    public Menu(MainWindow owner, Editor editor, Runnable compileAction) {
+    public Menu(MainWindow owner, Editor editor, PDFViewer pdfViewer, Runnable compileAction) {
         this.owner = owner;
         this.editor = editor;
+        this.pdfViewer = pdfViewer;
         this.compileAction = compileAction;
         preferences = Preferences.userNodeForPackage(MainWindow.class);
+        String currentFileString = preferences.get("currentFile", null);
+        if (currentFileString != null) {
+            currentFile = Path.of(currentFileString);
+        }
         darkMode = preferences.getBoolean("darkMode", false);
         macrosEnabled = preferences.getBoolean("macrosEnabled", true);
 
         editor.setMacrosEnabled(macrosEnabled);
         buildMenus();
+    }
+
+    public void loadPreviousDocument() {
+        if (currentFile != null) {
+            openDocument(false);
+        }
     }
 
     private void buildMenus() {
@@ -52,7 +65,7 @@ public class Menu extends JMenuBar {
         JMenuItem compileItem = new JMenuItem("Compile");
 
         newItem.addActionListener(e -> newDocument());
-        openItem.addActionListener(e -> openDocument());
+        openItem.addActionListener(e -> openDocument(true));
         saveItem.addActionListener(e -> saveDocument());
         saveAsItem.addActionListener(e -> saveDocumentAs());
         exitItem.addActionListener(e -> requestClose());
@@ -172,13 +185,20 @@ public class Menu extends JMenuBar {
         return saveDocument();
     }
 
-    private void openDocument() {
-        currentFile = editor.openDocument(currentFile, this::saveDocument);
+    private void openDocument(boolean needToPick) {
+        currentFile = editor.openDocument(currentFile, this::saveDocument, needToPick);
+        preferences.put("currentFile", currentFile.toString());
         owner.updateWindowTitle();
+        String texName = currentFile.getFileName().toString();
+        String pdfName = texName.replaceFirst("(?i)\\.tex$", ".pdf");
+        Path pdfFile = currentFile.resolveSibling(pdfName);
+
+        pdfViewer.loadPDF(pdfFile);
     }
 
     private void newDocument() {
         currentFile = editor.newDocument(currentFile, this::saveDocument);
+        preferences.put("currentFile", currentFile.toString());
         owner.updateWindowTitle();
     }
 
