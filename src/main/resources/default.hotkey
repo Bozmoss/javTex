@@ -1,6 +1,6 @@
 // Start a maths environment
 mk ::= $|$;
-dm ::= \begin{align*}\n\t|\n\end{align};
+dm ::= \begin{align*}\n\t|\n\end{align*};
 
 // Greek letters
 @a ::= \alpha;

@@ -44,7 +44,7 @@ Maven will compile the source code, resolve dependencies, and package the applic
 ### 3. Run javTex
 
 ```bash
-java -jar target/javTex-0.1.0-SNAPSHOT.jar
+java -jar target/javTex-1.1.0.jar
 ```
 
 The packaged JAR includes the application's Maven dependencies.

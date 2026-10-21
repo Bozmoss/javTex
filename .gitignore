@@ -2,6 +2,7 @@
 *.exe
 *.deb
 *.ps1
+!package-javTex.ps1
 
 # Compiled class file
 *.class
