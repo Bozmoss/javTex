@@ -1,6 +1,7 @@
 # Executable file
 *.exe
 *.deb
+*.ps1
 
 # Compiled class file
 *.class
